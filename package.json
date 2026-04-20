@@ -1,6 +1,6 @@
 {
   "name": "design-md",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Extract design tokens (typography, colors, spacing, motion, shadows) from any webpage and generate DESIGN.md / SKILL.md for AI coding tools. Fork of bergside/design-md-chrome.",
   "type": "module",
   "bin": {
@@ -8,8 +8,11 @@
   },
   "scripts": {
     "test": "node tests/run-tests.mjs",
+    "integration": "node tests/run-integration-tests.mjs",
     "capture:baseline": "node scripts/capture-baseline.mjs",
-    "check:contract": "node tests/check-contract.mjs"
+    "check:contract": "node tests/check-contract.mjs",
+    "ruler:apply": "node scripts/ruler-apply.mjs",
+    "ruler:check": "node scripts/ruler-apply.mjs --check"
   },
   "peerDependencies": {
     "chrome-launcher": ">=1",

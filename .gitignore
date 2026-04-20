@@ -3,3 +3,7 @@ CLAUDE.local.md
 .omc/
 node_modules/
 package-lock.json
+tests/fixtures/spike-output/
+tests/fixtures/integration-*
+.ruler-backup/
+**/*.bak
