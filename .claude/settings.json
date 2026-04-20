@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/lib/*.mjs|\"$CLAUDE_PROJECT_DIR\"/tests/*.mjs|\"$CLAUDE_PROJECT_DIR\"/service-worker.js|\"$CLAUDE_PROJECT_DIR\"/content-script.js) cd \"$CLAUDE_PROJECT_DIR\" && node tests/run-tests.mjs ;; esac",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty'); case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/manifest.json) node -e \"JSON.parse(require('fs').readFileSync('$CLAUDE_PROJECT_DIR/manifest.json','utf8'))\" && echo \"manifest.json: valid JSON\" ;; esac",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
