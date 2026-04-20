@@ -1,3 +1,5 @@
 CLAUDE.local.md
 .claude/settings.local.json
 .omc/
+node_modules/
+package-lock.json

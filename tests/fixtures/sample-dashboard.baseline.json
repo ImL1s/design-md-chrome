@@ -1,0 +1,706 @@
+{
+  "source": {
+    "url": "file:///Users/setsuna/Documents/design-md-chrome/tests/fixtures/sample-dashboard.html",
+    "title": "TypeUI Sample Dashboard Fixture"
+  },
+  "sampledAt": "__TS__",
+  "totalElements": 26,
+  "sampledElements": 20,
+  "typography": [
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "48px",
+      "lineHeight": "72px",
+      "fontWeight": "700",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "36px",
+      "lineHeight": "54px",
+      "fontWeight": "600",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "28px",
+      "lineHeight": "42px",
+      "fontWeight": "600",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "22px",
+      "lineHeight": "33px",
+      "fontWeight": "500",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "18px",
+      "lineHeight": "27px",
+      "fontWeight": "500",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": "500",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "28px",
+      "lineHeight": "42px",
+      "fontWeight": "600",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "fontWeight": "500",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Arial",
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "fontWeight": "500",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "normal",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    },
+    {
+      "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
+      "fontSize": "14px",
+      "lineHeight": "21px",
+      "fontWeight": "400",
+      "letterSpacing": "normal"
+    }
+  ],
+  "colors": [
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgb(249, 250, 251)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(31, 41, 55)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(31, 41, 55)",
+      "outlineColor": "rgb(31, 41, 55)"
+    },
+    {
+      "textColor": "rgb(55, 65, 81)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(55, 65, 81)",
+      "outlineColor": "rgb(55, 65, 81)"
+    },
+    {
+      "textColor": "rgb(75, 85, 99)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(75, 85, 99)",
+      "outlineColor": "rgb(75, 85, 99)"
+    },
+    {
+      "textColor": "rgb(107, 114, 128)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(107, 114, 128)",
+      "outlineColor": "rgb(107, 114, 128)"
+    },
+    {
+      "textColor": "rgb(156, 163, 175)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(156, 163, 175)",
+      "outlineColor": "rgb(156, 163, 175)"
+    },
+    {
+      "textColor": "rgb(55, 65, 81)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(55, 65, 81)",
+      "outlineColor": "rgb(55, 65, 81)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(55, 65, 81)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(55, 65, 81)",
+      "outlineColor": "rgb(55, 65, 81)"
+    },
+    {
+      "textColor": "rgb(55, 65, 81)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(55, 65, 81)",
+      "outlineColor": "rgb(55, 65, 81)"
+    },
+    {
+      "textColor": "rgb(55, 65, 81)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(55, 65, 81)",
+      "outlineColor": "rgb(55, 65, 81)"
+    },
+    {
+      "textColor": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(37, 99, 235)",
+      "borderColor": "rgb(255, 255, 255)",
+      "outlineColor": "rgb(255, 255, 255)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgb(229, 231, 235)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(0, 0, 0)",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(209, 213, 219)",
+      "outlineColor": "rgb(0, 0, 0)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(17, 24, 39) rgb(17, 24, 39) rgb(229, 231, 235)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    },
+    {
+      "textColor": "rgb(17, 24, 39)",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "borderColor": "rgb(17, 24, 39)",
+      "outlineColor": "rgb(17, 24, 39)"
+    }
+  ],
+  "spacing": [
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "24px",
+      "paddingRight": "24px",
+      "paddingBottom": "24px",
+      "paddingLeft": "24px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "16px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "12px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "8px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "8px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "6px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "4px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "8px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "12px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "12px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "10px",
+      "paddingRight": "20px",
+      "paddingBottom": "10px",
+      "paddingLeft": "20px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "10px",
+      "paddingRight": "20px",
+      "paddingBottom": "10px",
+      "paddingLeft": "20px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "8px",
+      "paddingRight": "12px",
+      "paddingBottom": "8px",
+      "paddingLeft": "12px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "12px",
+      "paddingRight": "24px",
+      "paddingBottom": "12px",
+      "paddingLeft": "24px"
+    },
+    {
+      "marginTop": "0px",
+      "marginRight": "0px",
+      "marginBottom": "0px",
+      "marginLeft": "0px",
+      "paddingTop": "0px",
+      "paddingRight": "0px",
+      "paddingBottom": "0px",
+      "paddingLeft": "0px"
+    },
+    {
+      "marginTop": "16px",
+      "marginRight": "0px",
+      "marginBottom": "16px",
+      "marginLeft": "0px",
+      "paddingTop": "20px",
+      "paddingRight": "20px",
+      "paddingBottom": "20px",
+      "paddingLeft": "20px"
+    },
+    {
+      "marginTop": "16px",
+      "marginRight": "0px",
+      "marginBottom": "16px",
+      "marginLeft": "0px",
+      "paddingTop": "20px",
+      "paddingRight": "20px",
+      "paddingBottom": "20px",
+      "paddingLeft": "20px"
+    }
+  ],
+  "radius": [
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "0px",
+    "6px",
+    "6px",
+    "4px",
+    "0px",
+    "0px",
+    "8px",
+    "8px"
+  ],
+  "shadows": [
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "none",
+    "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px, rgba(0, 0, 0, 0.06) 0px 2px 4px 0px",
+    "rgba(0, 0, 0, 0.1) 0px 4px 6px 0px, rgba(0, 0, 0, 0.06) 0px 2px 4px 0px"
+  ],
+  "motion": [
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0.15s",
+      "transitionTimingFunction": "ease-in-out",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    },
+    {
+      "transitionDuration": "0s",
+      "transitionTimingFunction": "ease",
+      "animationDuration": "0s",
+      "animationTimingFunction": "ease"
+    }
+  ],
+  "components": [
+    {
+      "type": "buttons",
+      "count": 2
+    },
+    {
+      "type": "links",
+      "count": 3
+    },
+    {
+      "type": "inputs",
+      "count": 1
+    },
+    {
+      "type": "cards",
+      "count": 2
+    },
+    {
+      "type": "navigation",
+      "count": 1
+    },
+    {
+      "type": "lists",
+      "count": 0
+    },
+    {
+      "type": "tables",
+      "count": 0
+    }
+  ],
+  "siteSignals": {
+    "title": "TypeUI Sample Dashboard Fixture",
+    "description": "",
+    "keywords": "",
+    "ogType": "",
+    "ogSiteName": "",
+    "appName": "",
+    "pathname": "/Users/setsuna/Documents/design-md-chrome/tests/fixtures/sample-dashboard.html",
+    "hostname": "",
+    "headings": [
+      "Sample Dashboard",
+      "Design Tokens Fixture"
+    ],
+    "navTexts": [
+      "Home",
+      "Products",
+      "About"
+    ],
+    "ctaTexts": [
+      "Primary Action",
+      "Secondary"
+    ],
+    "textSample": "Home Products About Sample Dashboard Design Tokens Fixture Deterministic CSS fixture for TypeUI extraction comparison tests. Do not edit without updating baseline. Card Title Section Subtitle Label Level Tag Level Lorem ipsum dolor sit amet, consectetur adipiscing elit. Primary Action Secondary Form",
+    "elementCounts": {
+      "forms": 0,
+      "inputs": 1,
+      "tables": 0,
+      "codeBlocks": 0,
+      "articles": 0,
+      "pricingSections": 0,
+      "productMarkers": 0,
+      "authMarkers": 0,
+      "checkoutMarkers": 0
+    }
+  }
+}
