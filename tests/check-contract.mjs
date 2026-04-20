@@ -51,6 +51,11 @@ function compareNode(a, b, path, errors, keyHint) {
   a = normalizeTimestamp(a, keyHint);
   b = normalizeTimestamp(b, keyHint);
 
+  if (a === undefined || b === undefined) {
+    if (a !== b)
+      errors.push(`${path || "(root)"}: field present on one side only (baseline=${a === undefined ? "missing" : "present"}, target=${b === undefined ? "missing" : "present"})`);
+    return;
+  }
   if (a === null || b === null) {
     if (a !== b) errors.push(`${path || "(root)"}: null mismatch (${a} vs ${b})`);
     return;
@@ -59,7 +64,6 @@ function compareNode(a, b, path, errors, keyHint) {
     errors.push(`${path || "(root)"}: type mismatch (${typeof a} vs ${typeof b})`);
     return;
   }
-  if (a === undefined && b === undefined) return;
 
   if (Array.isArray(a)) {
     if (!Array.isArray(b) || a.length !== b.length) {
@@ -173,11 +177,25 @@ export function computeContentHashes(obj) {
   };
 }
 
+function stripEnvelope(payload) {
+  // `__schemaVersion` is an envelope field stamped by writeWithSchema() on
+  // persisted CLI outputs; it is NOT part of the structural contract, so strip
+  // it before diff so a stamped target can compare cleanly against an
+  // unstamped baseline (or vice versa).
+  if (payload && typeof payload === "object" && !Array.isArray(payload)) {
+    const { __schemaVersion: _v, ...rest } = payload;
+    return rest;
+  }
+  return payload;
+}
+
 export function checkContract(baseline, target) {
+  const cleanBaseline = stripEnvelope(baseline);
+  const cleanTarget = stripEnvelope(target);
   const errors = [];
-  compareNode(baseline, target, "", errors);
-  const hb = computeContentHashes(baseline);
-  const ht = computeContentHashes(target);
+  compareNode(cleanBaseline, cleanTarget, "", errors);
+  const hb = computeContentHashes(cleanBaseline);
+  const ht = computeContentHashes(cleanTarget);
   for (const key of ["top5Colors", "top3FontSizes", "top3FontFamilies"]) {
     if (hb[key] !== ht[key])
       errors.push(`[hash] ${key} drift: ${hb[key].slice(0, 12)} vs ${ht[key].slice(0, 12)}`);

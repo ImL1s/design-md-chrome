@@ -3,6 +3,11 @@
  * design-md CLI (v0.5 α path — CDP-inject)
  * Usage: design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]
  *        design-md --version
+ *
+ * Schema stamping contract: JSON outputs (--dump-payload) are wrapped via writeWithSchema()
+ * and carry __schemaVersion at the top level. Markdown outputs (.md) are for humans/agents
+ * and intentionally do NOT embed __schemaVersion; consumers who need versioning should use
+ * --dump-payload.
  */
 
 import { launch } from "chrome-launcher";
@@ -16,16 +21,18 @@ import { normalizeExtractedStyles } from "../lib/normalize.mjs";
 import { generateDesignMarkdown } from "../lib/generate-design-md.mjs";
 import { generateSkillMarkdown } from "../lib/generate-skill-md.mjs";
 import { writeWithSchema, SCHEMA_VERSION } from "../lib/schema.mjs";
+import { patchContentScript, normalizeTimestamps } from "../lib/cdp-inject.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const REPO_ROOT = resolve(dirname(__filename), "..");
 const CS = resolve(REPO_ROOT, "content-script.js");
 
+const USAGE_TEXT =
+  "Usage: design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]\n" +
+  "       design-md --version\n";
+
 function usage(exitCode = 0) {
-  process.stderr.write(
-    "Usage: design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]\n" +
-    "       design-md --version\n"
-  );
+  process.stderr.write(USAGE_TEXT);
   process.exit(exitCode);
 }
 
@@ -45,7 +52,8 @@ try {
   });
 } catch (e) {
   process.stderr.write(`design-md: ${e.message}\n`);
-  usage(2);
+  process.stderr.write(USAGE_TEXT);
+  process.exit(2);
 }
 
 const { values, positionals } = parsed;
@@ -62,17 +70,6 @@ const url = positionals[1];
 if (!["design", "skill"].includes(values.mode)) {
   process.stderr.write(`design-md: --mode must be 'design' or 'skill', got '${values.mode}'\n`);
   process.exit(2);
-}
-
-function patchContentScript(src) {
-  const patched = src.replace(
-    /chrome\.runtime\.onMessage\.addListener\([\s\S]*?\n\s*\}\);/m,
-    "window.__typeuiExtract = extractStylesFromPage;"
-  );
-  if (patched === src) {
-    throw new Error("content-script.js structure changed — cannot locate chrome.runtime.onMessage block");
-  }
-  return patched;
 }
 
 async function extractViaCdp(target, verbose) {
@@ -140,23 +137,8 @@ function computeDiagnostics(payload) {
   ).length;
   return {
     sampledCount: payload.sampledElements ?? typography.length,
-    visibleCount: payload.sampledElements ?? typography.length,
     fontFallbackCount
   };
-}
-
-const TIMESTAMP_SENTINEL = "__TS__";
-const TIMESTAMP_KEY_RE = /(sampledAt|timestamp|capturedAt|createdAt|updatedAt)$/i;
-function normalizeTimestamps(obj) {
-  if (Array.isArray(obj)) return obj.map(normalizeTimestamps);
-  if (obj && typeof obj === "object") {
-    const out = {};
-    for (const [k, v] of Object.entries(obj)) {
-      out[k] = TIMESTAMP_KEY_RE.test(k) ? TIMESTAMP_SENTINEL : normalizeTimestamps(v);
-    }
-    return out;
-  }
-  return obj;
 }
 
 async function main() {
@@ -165,7 +147,7 @@ async function main() {
 
   if (values["dump-payload"]) {
     const normalizedPayload = normalizeTimestamps(payload);
-    const out = JSON.stringify(normalizedPayload, null, 2) + "\n";
+    const out = JSON.stringify(writeWithSchema(normalizedPayload), null, 2) + "\n";
     if (values.output && values.output !== "-") {
       writeFileSync(values.output, out);
       process.stderr.write(`design-md: wrote raw payload to ${values.output}\n`);

@@ -66,13 +66,39 @@ for (const target of config.targets) {
       continue;
     }
     const actual = readFileSync(outPath, "utf8");
+    // Primary: byte-compare expected generator output vs on-disk content.
+    if (actual !== expected) {
+      const expLines = expected.split("\n");
+      const actLines = actual.split("\n");
+      const minLen = Math.min(expLines.length, actLines.length);
+      let diffLine = -1;
+      for (let i = 0; i < minLen; i++) {
+        if (expLines[i] !== actLines[i]) { diffLine = i; break; }
+      }
+      const trunc = s => s.length > 120 ? s.slice(0, 120) + "…" : s;
+      if (diffLine === -1) {
+        // Matching prefix but different line counts.
+        console.error(
+          `CHECK FAIL: ${target.path} drifted from .ruler source\n` +
+          `  expected ${expected.length} bytes, got ${actual.length} bytes\n` +
+          `  length mismatch: expected ${expLines.length} lines, got ${actLines.length} lines`
+        );
+      } else {
+        console.error(
+          `CHECK FAIL: ${target.path} drifted from .ruler source\n` +
+          `  expected ${expected.length} bytes, got ${actual.length} bytes\n` +
+          `  first diff at line ${diffLine + 1}: "${trunc(expLines[diffLine])}" vs "${trunc(actLines[diffLine])}"`
+        );
+      }
+      failed++;
+      continue;
+    }
+    // Secondary: format validator as second-line defense.
     if (!validator(actual)) {
       console.error(`CHECK FAIL: ${target.path} does not pass format validation`);
       failed++;
       continue;
     }
-    // Format-only check — both this generator and @intellectronica/ruler produce valid outputs.
-    // Exact byte-match is intentionally NOT required here; npm run ruler:apply + git diff catches drift.
     console.log(`ok: ${target.path}`);
   } else {
     mkdirSync(dirname(outPath), { recursive: true });

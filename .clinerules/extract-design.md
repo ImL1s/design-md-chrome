@@ -17,7 +17,7 @@ npx design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]
 - `--mode design` (default): writes `DESIGN.md` — human-facing design-system blueprint
 - `--mode skill`: writes `SKILL.md` — agent-ready file with frontmatter + managed block markers
 - `--output <path>` (alias `-o`): file path; omit to write to stdout; use `-` to force stdout
-- `--verbose`: emit diagnostics (`sampledCount`, `visibleCount`, `fontFallbackCount`, `__schemaVersion`) to stderr
+- `--verbose`: emit diagnostics (`sampledCount`, `fontFallbackCount`, `__schemaVersion`) to stderr
 - `--dump-payload`: emit raw JSON payload instead of markdown (useful for contract tests only)
 
 ## Prerequisites

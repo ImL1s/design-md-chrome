@@ -92,6 +92,9 @@ try {
     assert.equal(check.status, 0,
       `CLI payload vs baseline: check-contract exit 0 expected, got ${check.status}\n${check.stdout}\n${check.stderr}`
     );
+    // Assert __schemaVersion is stamped on the dump-payload output (US-008 contract)
+    const dumped = JSON.parse(readFileSync(PAYLOAD_OUT, "utf8"));
+    assert.equal(dumped.__schemaVersion, 1, "dump-payload output must carry __schemaVersion: 1");
   }
 
   // 7. --verbose emits diagnostics to stderr
