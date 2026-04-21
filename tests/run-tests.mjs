@@ -211,4 +211,231 @@ import {
   assert.match(h.top5Colors, /^[0-9a-f]{64}$/, "hash is 64 hex chars");
 }
 
+// ============================================================================
+// US-001 Batch helpers (lib/batch.mjs)
+// ============================================================================
+import { parseUrlListFile, slugifyUrl, isSingleFileOutputPath } from "../lib/batch.mjs";
+import { writeFileSync as _writeFileSync, mkdtempSync as _mkdtempSync, rmSync as _rmSync } from "node:fs";
+import { tmpdir as _tmpdir } from "node:os";
+import { join as _join } from "node:path";
+
+// slugifyUrl: hostname + pathname canonicalization
+{
+  assert.equal(slugifyUrl("https://example.com/"), "example.com-index", "empty path → index");
+  assert.equal(slugifyUrl("https://example.com"), "example.com-index", "no path → index");
+  assert.equal(slugifyUrl("https://example.com/foo/bar"), "example.com-foo-bar", "nested path dashed");
+  assert.equal(slugifyUrl("https://EXAMPLE.com/X"), "example.com-X", "hostname lowercased, path case kept");
+  assert.equal(slugifyUrl("https://a.b.c/page.html"), "a.b.c-page", ".html extension stripped");
+  assert.equal(slugifyUrl("https://a.b/deep/page.htm"), "a.b-deep-page", ".htm stripped from last segment");
+  assert.equal(slugifyUrl("file:///abs/dir/file.html"), "local-abs-dir-file", "file:// with empty hostname");
+  assert.equal(slugifyUrl("https://x.y/a?v=1"), "x.y-a-v-1", "query string folded");
+  assert.equal(
+    slugifyUrl("https://x.y/?q=hello world&z=1"),
+    "x.y-q-hello-world-z-1",
+    "special chars collapsed to hyphen"
+  );
+  // Determinism: same input, same output
+  assert.equal(slugifyUrl("https://x.y/a"), slugifyUrl("https://x.y/a"), "deterministic");
+}
+
+// parseUrlListFile: comments, blanks, CRLF
+{
+  const dir = _mkdtempSync(_join(_tmpdir(), "design-md-batch-"));
+  try {
+    const p = _join(dir, "urls.txt");
+    _writeFileSync(
+      p,
+      "# first comment\r\nhttps://a.com\r\n\r\n# another\nhttps://b.com/page\n   \n   https://c.com/x   \n"
+    );
+    const urls = parseUrlListFile(p);
+    assert.deepEqual(
+      urls,
+      ["https://a.com", "https://b.com/page", "https://c.com/x"],
+      "parse strips comments/blanks/CRLF/surrounding whitespace"
+    );
+  } finally {
+    _rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// parseUrlListFile: missing file throws
+{
+  assert.throws(
+    () => parseUrlListFile("/nonexistent/__design_md_batch__.txt"),
+    /ENOENT|no such file/,
+    "missing file throws"
+  );
+}
+
+// isSingleFileOutputPath: extension detection
+{
+  assert.ok(isSingleFileOutputPath("out.md"), "out.md is single-file");
+  assert.ok(isSingleFileOutputPath("path/to/out.json"), "out.json is single-file");
+  assert.ok(isSingleFileOutputPath("OUT.MD"), "case-insensitive");
+  assert.ok(!isSingleFileOutputPath("outdir"), "no ext → not single-file");
+  assert.ok(!isSingleFileOutputPath("some.dir/name"), "dot in dir name ok");
+  assert.ok(!isSingleFileOutputPath("out.txt"), ".txt is not single-file");
+}
+
+// ============================================================================
+// US-002 generateCssVars (lib/generate-css-vars.mjs)
+// ============================================================================
+import { generateCssVars, __test__ as cssVarsInternals } from "../lib/generate-css-vars.mjs";
+
+// 5-color palette produces --color-1 ... --color-5
+{
+  const normalizedWith5 = {
+    colorPalette: [
+      { token: "color.text.primary", value: "#111827" },
+      { token: "color.surface.base", value: "#ffffff" },
+      { token: "color.border.default", value: "#e5e7eb" },
+      { token: "color.focus.ring", value: "#2563eb" },
+      { token: "color.text.secondary", value: "#4b5563" },
+      { token: "color.text.tertiary", value: "#9ca3af" } // overflow, should be dropped
+    ],
+    typographyScale: [],
+    spacingScale: [],
+    radiusTokens: []
+  };
+  const css = generateCssVars({ normalized: normalizedWith5, payload: null });
+  for (let i = 1; i <= 5; i++) {
+    assert.ok(css.includes(`--color-${i}:`), `expected --color-${i}`);
+  }
+  assert.ok(!css.includes("--color-6:"), "should not emit --color-6 when only 5 requested");
+  assert.ok(css.includes("#111827"), "palette value preserved");
+  assert.ok(css.includes("/* Colors */"), "Colors section comment");
+}
+
+// Font families canonicalized (double-quote wrap for whitespace names)
+{
+  const payload = {
+    typography: [
+      { fontFamily: "Inter, sans-serif" },
+      { fontFamily: "Inter, sans-serif" },
+      { fontFamily: "Helvetica Neue, Arial, sans-serif" },
+      { fontFamily: '"Roboto Mono", monospace' }
+    ]
+  };
+  const css = generateCssVars({
+    normalized: { colorPalette: [], typographyScale: [], spacingScale: [], radiusTokens: [] },
+    payload
+  });
+  assert.ok(css.includes("--font-family-1: Inter, sans-serif;"), "top family unquoted single-word");
+  assert.ok(
+    css.includes('--font-family-2: "Helvetica Neue", Arial, sans-serif;') ||
+    css.includes('--font-family-2: "Roboto Mono", monospace;'),
+    "second family quoted for whitespace"
+  );
+  // Sorted by frequency desc; ties broken by localeCompare → deterministic
+  const helvIdx = css.indexOf("Helvetica Neue");
+  const robotoIdx = css.indexOf("Roboto Mono");
+  assert.ok(helvIdx >= 0 || robotoIdx >= 0, "at least one multi-word family emitted");
+}
+
+// Empty sections are OMITTED (no dangling section comments)
+{
+  const empty = {
+    colorPalette: [],
+    typographyScale: [],
+    spacingScale: [],
+    radiusTokens: []
+  };
+  const css = generateCssVars({ normalized: empty, payload: { typography: [] } });
+  assert.equal(css, ":root {\n}\n", "fully empty emits minimal :root block");
+  assert.ok(!css.includes("/* Colors */"), "no empty Colors section comment");
+  assert.ok(!css.includes("/* Font sizes */"), "no empty Font sizes section comment");
+  assert.ok(!css.includes("/* Spacings */"), "no empty Spacings section");
+  assert.ok(!css.includes("/* Radii */"), "no empty Radii section");
+}
+
+// Determinism: same input → same bytes
+{
+  const normalized = {
+    colorPalette: [{ token: "color.text.primary", value: "#111827" }],
+    typographyScale: [{ token: "font.size.xs", value: "14px" }],
+    spacingScale: [],
+    radiusTokens: []
+  };
+  const payload = { typography: [{ fontFamily: "Inter" }] };
+  const a = generateCssVars({ normalized, payload });
+  const b = generateCssVars({ normalized, payload });
+  assert.equal(a, b, "deterministic output");
+}
+
+// Top-3 font-size truncation
+{
+  const normalized = {
+    colorPalette: [],
+    typographyScale: [
+      { token: "font.size.xs", value: "12px" },
+      { token: "font.size.sm", value: "14px" },
+      { token: "font.size.md", value: "16px" },
+      { token: "font.size.lg", value: "20px" }
+    ],
+    spacingScale: [],
+    radiusTokens: []
+  };
+  const css = generateCssVars({ normalized, payload: null });
+  assert.ok(css.includes("--font-size-1: 12px;"), "first font-size");
+  assert.ok(css.includes("--font-size-3: 16px;"), "third font-size");
+  assert.ok(!css.includes("--font-size-4:"), "fourth font-size truncated");
+}
+
+// normalizeFamily helper: strips quotes, lowercases stays as original case
+{
+  const { normalizeFamily } = cssVarsInternals;
+  assert.equal(normalizeFamily('"Inter", "Helvetica Neue", sans-serif'), "Inter, Helvetica Neue, sans-serif");
+  assert.equal(normalizeFamily("Inter,sans-serif"), "Inter, sans-serif");
+  assert.equal(normalizeFamily(""), "");
+  assert.equal(normalizeFamily("  Inter  "), "Inter");
+}
+
+// ============================================================================
+// US-003 wait-opts (lib/wait-opts.mjs)
+// ============================================================================
+import { parseWaitMs, resolveSelectorTimeout, MAX_WAIT_MS, DEFAULT_SELECTOR_TIMEOUT_MS } from "../lib/wait-opts.mjs";
+
+// parseWaitMs: accepts valid integers
+{
+  assert.deepEqual(parseWaitMs(undefined), { ok: true, value: 0 }, "undefined → 0");
+  assert.deepEqual(parseWaitMs(null), { ok: true, value: 0 }, "null → 0");
+  assert.deepEqual(parseWaitMs("0"), { ok: true, value: 0 }, "0 is valid");
+  assert.deepEqual(parseWaitMs("500"), { ok: true, value: 500 }, "500 is valid");
+  assert.deepEqual(parseWaitMs("30000"), { ok: true, value: 30000 }, "30000 (cap) is valid");
+  assert.deepEqual(parseWaitMs("  100  "), { ok: true, value: 100 }, "trimmed");
+}
+
+// parseWaitMs: rejects invalid
+{
+  const r1 = parseWaitMs("-1");
+  assert.ok(!r1.ok, "negative rejected");
+  const r2 = parseWaitMs("abc");
+  assert.ok(!r2.ok, "non-numeric rejected");
+  const r3 = parseWaitMs("1.5");
+  assert.ok(!r3.ok, "decimal rejected");
+  const r4 = parseWaitMs("30001");
+  assert.ok(!r4.ok, "over cap rejected");
+  assert.match(r4.reason, /30000/, "reason mentions cap");
+  const r5 = parseWaitMs("1e3");
+  assert.ok(!r5.ok, "scientific rejected");
+  const r6 = parseWaitMs("+5");
+  assert.ok(!r6.ok, "leading + rejected");
+}
+
+// resolveSelectorTimeout: env var parsing
+{
+  assert.equal(resolveSelectorTimeout(undefined), DEFAULT_SELECTOR_TIMEOUT_MS, "undefined → default");
+  assert.equal(resolveSelectorTimeout(""), DEFAULT_SELECTOR_TIMEOUT_MS, "empty → default");
+  assert.equal(resolveSelectorTimeout("2000"), 2000, "valid number");
+  assert.equal(resolveSelectorTimeout("abc"), DEFAULT_SELECTOR_TIMEOUT_MS, "bad string → default");
+  assert.equal(resolveSelectorTimeout("0"), DEFAULT_SELECTOR_TIMEOUT_MS, "0 → default (guard)");
+  assert.equal(resolveSelectorTimeout("-100"), DEFAULT_SELECTOR_TIMEOUT_MS, "negative → default");
+}
+
+// Constants exposed
+{
+  assert.equal(MAX_WAIT_MS, 30000);
+  assert.equal(DEFAULT_SELECTOR_TIMEOUT_MS, 30000);
+}
+
 console.log("All tests passed.");
