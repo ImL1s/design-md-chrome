@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TypeUI Sample Dashboard Fixture</title>
+<style>
+  :root { color-scheme: light; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    padding: 24px;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    color: #111827;
+    background-color: #f9fafb;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+  h1 { font-size: 48px; margin: 0 0 16px; color: #111827; font-weight: 700; }
+  h2 { font-size: 36px; margin: 0 0 12px; color: #1f2937; font-weight: 600; }
+  h3 { font-size: 28px; margin: 0 0 8px;  color: #374151; font-weight: 600; }
+  h4 { font-size: 22px; margin: 0 0 8px;  color: #4b5563; font-weight: 500; }
+  h5 { font-size: 18px; margin: 0 0 6px;  color: #6b7280; font-weight: 500; }
+  h6 { font-size: 16px; margin: 0 0 4px;  color: #9ca3af; font-weight: 500; }
+  p  { font-size: 14px; margin: 0 0 12px; color: #111827; }
+  .card {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 16px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+  .btn-primary {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 150ms ease-in-out;
+  }
+  .btn-primary:hover { background-color: #1d4ed8; }
+  .btn-secondary {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #e5e7eb;
+    color: #111827;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 600ms linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  nav {
+    display: flex;
+    gap: 16px;
+    padding: 12px 24px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  nav a { color: #374151; text-decoration: none; font-size: 14px; }
+  input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 240px;
+    font-family: "Inter", system-ui, sans-serif;
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#home">Home</a>
+  <a href="#products">Products</a>
+  <a href="#about">About</a>
+</nav>
+<main>
+  <h1>Sample Dashboard</h1>
+  <h2>Design Tokens Fixture</h2>
+  <p>Deterministic CSS fixture for TypeUI extraction comparison tests. Do not edit without updating baseline.</p>
+  <section class="card">
+    <h3>Card Title</h3>
+    <h4>Section Subtitle</h4>
+    <h5>Label Level</h5>
+    <h6>Tag Level</h6>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <button class="btn-primary">Primary Action</button>
+    <button class="btn-secondary">Secondary</button>
+  </section>
+  <section class="card">
+    <h3>Form</h3>
+    <input type="text" placeholder="Search..." />
+  </section>
+  <div class="spinner" aria-label="Loading" role="status"></div>
+</main>
+</body>
+</html>

@@ -1,0 +1,54 @@
+# /extract-design &lt;url&gt;
+
+Extract design tokens (typography, colors, spacing, shadows, motion) from any live webpage and write a `DESIGN.md` or `SKILL.md` file for downstream AI coding tools.
+
+## When to use
+
+- User provides a URL and asks for a design blueprint / style guide
+- User wants to port another site's look&#8209;and&#8209;feel to their own project
+- User wants a skill file that captures a design system for Claude Code / Cursor / Codex
+
+## Command
+
+```bash
+npx design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]
+```
+
+- `--mode design` (default): writes `DESIGN.md` — human-facing design-system blueprint
+- `--mode skill`: writes `SKILL.md` — agent-ready file with frontmatter + managed block markers
+- `--output <path>` (alias `-o`): file path; omit to write to stdout; use `-` to force stdout
+- `--verbose`: emit diagnostics (`sampledCount`, `fontFallbackCount`, `__schemaVersion`) to stderr
+- `--dump-payload`: emit raw JSON payload instead of markdown (useful for contract tests only)
+
+## Prerequisites
+
+- Node &ge; 20
+- Google Chrome installed locally (headless used via `puppeteer-core` + `chrome-launcher` — **no 170 MB Chromium download**)
+- First run: `npm install` in the `design-md-chrome` repo to pull peer deps
+
+## Workflow for this agent
+
+1. **Capture the URL** — ask the user for the target URL if not provided.
+2. **Run the CLI** with the user's mode preference (default to `skill` for AI-agent downstream use).
+3. **Read the output** — the CLI writes a Markdown file with sections: Mission, Brand, Style Foundations, Accessibility (WCAG 2.2 AA), Writing Tone, Rules: Do / Don't, Guideline Authoring Workflow, Required Output Structure, Component Rule Expectations, Quality Gates. `SKILL.md` additionally wraps the body with `TYPEUI_SH_MANAGED_START` / `TYPEUI_SH_MANAGED_END` markers.
+4. **Offer next steps** — e.g., commit the file, iterate tokens, adapt to another framework.
+
+## Limits
+
+- **Shadow DOM**: only open shadow roots are visible. Closed shadow roots are not extracted.
+- **Cross-origin iframes**: not extracted (per-frame injection is future work).
+- **Dynamic SPAs**: the CLI waits for `networkidle2` and `document.fonts.ready`, but very late-loading design systems (post-1&nbsp;s) may be missed — consider `--verbose` diagnostics to verify `sampledCount`.
+- **Trusted Types / CSP hardened sites** (GitHub, Stripe): the CLI uses CDP isolated-world injection which bypasses page-level Trusted Types and CSP `script-src`. Verified in `docs/spike-results.md`.
+
+## Do not
+
+- Do not bypass the CLI and invoke `puppeteer-core` directly — the CLI is the only entry that guarantees isolated-world injection + schema stamping (`__schemaVersion`).
+- Do not hand-edit the `TYPEUI_SH_MANAGED_START`&nbsp;/&nbsp;`TYPEUI_SH_MANAGED_END` block in a `SKILL.md`; downstream tooling rewrites it on regeneration.
+- Do not commit `tests/fixtures/spike-output/` or `tests/fixtures/integration-*` — they are gitignored build artifacts.
+
+## See also
+
+- Repo usage and policies: `AGENTS.md` at repo root
+- Extraction internals and TDD policy: `CLAUDE.md`
+- Baseline regeneration: `docs/baseline-capture.md`
+- Schema migration: `docs/migration.md`

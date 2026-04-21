@@ -1,0 +1,14 @@
+{
+  "$schema": "Minimal ruler-like config. Source of truth: this file + extract-design.md. Generator: scripts/ruler-apply.mjs.",
+  "source": ".ruler/extract-design.md",
+  "targets": [
+    { "path": ".claude/skills/extract-design/SKILL.md", "format": "claude-skill" },
+    { "path": ".cursor/commands/extract-design.mdc", "format": "cursor-mdc" },
+    { "path": ".windsurf/workflows/extract-design.md", "format": "windsurf-workflow" },
+    { "path": ".clinerules/extract-design.md", "format": "cline-rule" }
+  ],
+  "skillMeta": {
+    "name": "extract-design",
+    "description": "Extract design tokens from a URL via the design-md CLI and write DESIGN.md or SKILL.md. Use when the user provides a website URL and wants a design-system blueprint or an agent-ready skill file for downstream AI coding tools (Claude Code, Cursor, Codex, Google Stitch)."
+  }
+}

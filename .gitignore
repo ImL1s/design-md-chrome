@@ -1,0 +1,9 @@
+CLAUDE.local.md
+.claude/settings.local.json
+.omc/
+node_modules/
+package-lock.json
+tests/fixtures/spike-output/
+tests/fixtures/integration-*
+.ruler-backup/
+**/*.bak
