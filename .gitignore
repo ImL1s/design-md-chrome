@@ -7,3 +7,4 @@ tests/fixtures/spike-output/
 tests/fixtures/integration-*
 .ruler-backup/
 **/*.bak
+.claude/pr-watch/
