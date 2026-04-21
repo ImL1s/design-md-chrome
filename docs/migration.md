@@ -6,9 +6,9 @@ Source of truth: `lib/schema.mjs` (`SCHEMA_VERSION`, `writeWithSchema`, `validat
 
 ## Current state
 
-- **Package version**: `0.5.0` (α path — CDP-inject CLI)
-- **Schema version**: `1`
-- **Payloads are stamped** via `writeWithSchema()` in `bin/design-md.mjs` (CLI, `--dump-payload` and internal writes)
+- **Package version**: `0.5.0` on disk (v0.6 CLI features merged to `main` via PR #2 — version bump awaits `/release`)
+- **Schema version**: `1` (unchanged since v0.5)
+- **Payloads are stamped** via `writeWithSchema()` in `bin/design-md.mjs` — exposed via `--format json` (and the deprecated `--dump-payload` alias) and future internal writes
 - **Chrome extension** (`service-worker.js`) does not currently persist payloads to `chrome.storage.local`; when that gate lands, the same `writeWithSchema()` helper will be used to mirror `__schemaVersion` onto storage
 
 ## Per-version pair matrix
@@ -16,8 +16,12 @@ Source of truth: `lib/schema.mjs` (`SCHEMA_VERSION`, `writeWithSchema`, `validat
 | From → To | Path | Schema Δ | Forward | Downgrade |
 |---|---|---|---|---|
 | 0.4 → 0.5 | **α (CDP-inject CLI)** | none | ship CLI; extension unchanged | `npm uninstall -g design-md` (extension v0.4 still works) |
-| 0.5 → 0.6 | **β add concat-core**, CDP retained as fallback | 1 → 2 | `scripts/upgrade-v0.5-to-v0.6.mjs` (stub) — adds `__schemaVersion: 2` and new fields | `scripts/downgrade-v0.6-to-v0.5.mjs` (stub) — strips new fields, downgrades schema |
-| 0.6 → 0.7 | **deprecate CDP path** | 2 → 3 | `scripts/upgrade-v0.6-to-v0.7.mjs` (TBD) | `scripts/downgrade-v0.7-to-v0.6.mjs` (TBD) |
+| 0.5 → 0.6 | **additive CLI flags** (batch mode, `--format`, `--wait`/`--wait-selector`) | none | drop-in upgrade; no payload changes; `--dump-payload` still works as deprecated alias of `--format json` | `npm install -g design-md@0.5.0` — v0.5 shipped payloads are byte-compatible with v0.6 contract tests |
+| 0.6 → 0.7 | **β concat-core refactor** (or single-browser batch session, TBD) | potentially 1 → 2 | `scripts/upgrade-v0.6-to-v0.7.mjs` (TBD) | `scripts/downgrade-v0.7-to-v0.6.mjs` (TBD) |
+
+### v0.6 CLI-flag deprecations
+
+- `--dump-payload` → `--format json`. The legacy flag still works but emits a stderr deprecation warning. It will be removed in a future major (no earlier than v1.0).
 
 Downgrade scripts must be **idempotent**: running twice on the same payload is a no-op.
 

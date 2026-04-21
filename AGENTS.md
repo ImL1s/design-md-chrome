@@ -34,12 +34,33 @@ node bin/design-md.mjs extract https://www.typeui.sh -o DESIGN.md
 # Extract as an agent-ready SKILL.md (with managed-block markers)
 node bin/design-md.mjs extract https://stripe.com --mode skill -o stripe.skill.md
 
-# Print extraction diagnostics to stderr + raw payload to file
+# Print extraction diagnostics to stderr while writing design doc
 node bin/design-md.mjs extract https://github.com --mode design -o gh.md --verbose
 
-# Dump normalized payload as JSON (used by regression tests)
+# v0.6+: emit CSS variables (:root { --color-1: ...; }) instead of markdown
+node bin/design-md.mjs extract <url> --format css-vars -o tokens.css
+
+# v0.6+: raw normalized payload (schema-stamped) for machine pipelines / regression tests
+node bin/design-md.mjs extract <url> --format json -o payload.json
+
+# v0.6+: batch extraction — N URLs → one file per URL in a directory
+node bin/design-md.mjs extract https://a.com https://b.com https://c.com -o out-dir/
+
+# v0.6+: batch via --input file (one URL per line, # comments ignored)
+node bin/design-md.mjs extract --input urls.txt -o out-dir/ --format css-vars
+
+# v0.6+: wait for a selector to appear (SPAs with late-loading design systems)
+node bin/design-md.mjs extract https://slow-app.com --wait-selector ".app-ready" -o DESIGN.md
+
+# v0.6+: unconditional additional delay after page is interactive
+node bin/design-md.mjs extract <url> --wait 2000 -o DESIGN.md
+
+# DEPRECATED: --dump-payload still works but emits a deprecation warning.
+# Prefer --format json.
 node bin/design-md.mjs extract <url> --dump-payload -o payload.json
 ```
+
+Exit codes: `0` all URLs ok, `1` at least one URL failed (batch mode reports `[N/M] FAILED: ...` to stderr and keeps going), `2` usage error.
 
 ### 3. Use the produced file
 

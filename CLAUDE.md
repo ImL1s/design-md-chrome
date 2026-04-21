@@ -15,7 +15,7 @@ Vanilla JavaScript. `lib/*.mjs` and `tests/*.mjs` are ES modules; `service-worke
 - Unit tests: `node tests/run-tests.mjs` (bare `node:assert/strict`).
 - Contract check: `node tests/check-contract.mjs --baseline <path> --target <path>`.
 - Capture baseline: `npm run capture:baseline` (requires `npm install` first; launches real Chrome).
-- CLI (once shipped): `npx design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]`.
+- CLI: `npx design-md extract <url> [<url2> ...] [--input <file>] [--mode design|skill] [--format md|json|css-vars] [--wait <ms>] [--wait-selector <css>] [--output <path>] [--verbose]`. Batch mode triggers when ≥ 2 URLs are supplied (positional and/or via `--input`); `--output` must then be a directory. `--dump-payload` is the deprecated alias of `--format json`.
 - Icons: `bash scripts/generate-icons.sh`.
 - No lint/format step — reload the unpacked extension at `chrome://extensions` after code changes. See `.claude/skills/reload-extension/SKILL.md` for the full reload matrix.
 

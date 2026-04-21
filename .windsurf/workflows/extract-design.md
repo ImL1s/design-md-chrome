@@ -3,27 +3,56 @@ description: Extract design tokens from a URL via the design-md CLI and write DE
 auto_execution_mode: 3
 ---
 
-# /extract-design &lt;url&gt;
+# /extract-design &lt;url&gt; [&lt;url2&gt; ...]
 
-Extract design tokens (typography, colors, spacing, shadows, motion) from any live webpage and write a `DESIGN.md` or `SKILL.md` file for downstream AI coding tools.
+Extract design tokens (typography, colors, spacing, shadows, motion) from one or many live webpages and write `DESIGN.md` / `SKILL.md` / raw JSON / CSS custom properties for downstream AI coding tools.
 
 ## When to use
 
 - User provides a URL and asks for a design blueprint / style guide
+- User provides multiple URLs and wants to compare or mass-extract (e.g., competitor audit)
 - User wants to port another site's look&#8209;and&#8209;feel to their own project
 - User wants a skill file that captures a design system for Claude Code / Cursor / Codex
+- User wants CSS variables (`:root { --color-1: #...; }`) or raw JSON for downstream tooling
 
 ## Command
 
 ```bash
-npx design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]
+# Single URL, default DESIGN.md
+npx design-md extract <url> [--mode design|skill] [--format md|json|css-vars]
+                            [--output <path>] [--verbose]
+                            [--wait <ms>] [--wait-selector <css>]
+
+# Batch: multiple positional URLs, or --input <file> (one URL per line, # comments allowed)
+npx design-md extract <url1> <url2> <url3> [--output <dir>] [--format ...]
+npx design-md extract --input urls.txt --output out-dir
+
+# Version
+npx design-md --version
 ```
 
-- `--mode design` (default): writes `DESIGN.md` — human-facing design-system blueprint
-- `--mode skill`: writes `SKILL.md` — agent-ready file with frontmatter + managed block markers
-- `--output <path>` (alias `-o`): file path; omit to write to stdout; use `-` to force stdout
-- `--verbose`: emit diagnostics (`sampledCount`, `fontFallbackCount`, `__schemaVersion`) to stderr
-- `--dump-payload`: emit raw JSON payload instead of markdown (useful for contract tests only)
+### Flags
+
+- `--mode design` (default): human-facing design-system blueprint
+- `--mode skill`: agent-ready file with frontmatter + `TYPEUI_SH_MANAGED_START/END` markers
+- `--format md` (default): Markdown output (obeys `--mode`)
+- `--format json`: raw payload with `__schemaVersion: 1` envelope — use for regression / machine pipelines
+- `--format css-vars`: emits a `:root { ... }` block with top-5 colors, top-3 font sizes / families / spacings / radii
+- `--output <path>` (alias `-o`): file path for single-URL, **directory** for batch (auto-created); omit to stream to stdout; use `-` to force stdout
+- `--input <file>`: newline-delimited URL list; `#` and blank lines ignored
+- `--wait <ms>`: additional delay after `networkidle2` + `document.fonts.ready`; non-negative integer ≤ 30000
+- `--wait-selector <css>`: wait for a CSS selector to appear before extracting (30s timeout; on timeout: stderr warning + continue, never aborts)
+- `--verbose`: stderr diagnostics (`sampledCount`, `fontFallbackCount`, `__schemaVersion`, wait timings)
+- `--dump-payload`: **deprecated** alias of `--format json`; still works, emits a deprecation warning
+
+### Batch behavior
+
+- **N ≥ 2 URLs** triggers batch mode
+- With `--output <dir>`: one file per URL, named `<hostname>-<pathname-slug>.<ext>`; collisions auto-suffixed `-2`, `-3`; oversize slugs truncated with SHA-256 tail
+- Without `--output`: stdout concatenation separated by `\n---\n` (md / css-vars) or emitted as a JSON array (json)
+- Per-URL progress lines stream to stderr (`[N/M] extracting ...` → `done in Xms` or `FAILED: ...`)
+- Per-URL failures do **not** abort remaining URLs; exit code is `1` if any failed, `0` if all passed, `2` for usage errors
+- `--output out.md|out.json|out.css` in batch mode is rejected (exit 2) — batch needs a directory
 
 ## Prerequisites
 
@@ -33,23 +62,27 @@ npx design-md extract <url> [--mode design|skill] [--output <path>] [--verbose]
 
 ## Workflow for this agent
 
-1. **Capture the URL** — ask the user for the target URL if not provided.
-2. **Run the CLI** with the user's mode preference (default to `skill` for AI-agent downstream use).
-3. **Read the output** — the CLI writes a Markdown file with sections: Mission, Brand, Style Foundations, Accessibility (WCAG 2.2 AA), Writing Tone, Rules: Do / Don't, Guideline Authoring Workflow, Required Output Structure, Component Rule Expectations, Quality Gates. `SKILL.md` additionally wraps the body with `TYPEUI_SH_MANAGED_START` / `TYPEUI_SH_MANAGED_END` markers.
-4. **Offer next steps** — e.g., commit the file, iterate tokens, adapt to another framework.
+1. **Capture the URL(s)** — ask the user for the target URL(s) if not provided. One or many are fine.
+2. **Pick a format** — default `md` for humans; `skill` mode for AI agents; `css-vars` when the user wants drop-in CSS tokens; `json` for machine pipelines.
+3. **Run the CLI** with the user's chosen mode / format.
+4. **For SPAs that load late**, add `--wait-selector` to the command (e.g., `--wait-selector ".app-ready"`) or `--wait 2000` if the app has no stable ready signal.
+5. **Read the output** — the CLI writes a Markdown file with sections: Mission, Brand, Style Foundations, Accessibility (WCAG 2.2 AA), Writing Tone, Rules: Do / Don't, Guideline Authoring Workflow, Required Output Structure, Component Rule Expectations, Quality Gates. `SKILL.md` additionally wraps the body with `TYPEUI_SH_MANAGED_START` / `TYPEUI_SH_MANAGED_END` markers.
+6. **Offer next steps** — e.g., commit the file, iterate tokens, adapt to another framework, compare two sites by diffing `--format json` payloads.
 
 ## Limits
 
 - **Shadow DOM**: only open shadow roots are visible. Closed shadow roots are not extracted.
 - **Cross-origin iframes**: not extracted (per-frame injection is future work).
-- **Dynamic SPAs**: the CLI waits for `networkidle2` and `document.fonts.ready`, but very late-loading design systems (post-1&nbsp;s) may be missed — consider `--verbose` diagnostics to verify `sampledCount`.
+- **Dynamic SPAs**: the CLI waits for `networkidle2` and `document.fonts.ready`; for late-loading design systems use `--wait-selector` or `--wait` — `--verbose` prints the match / timeout duration for observability.
 - **Trusted Types / CSP hardened sites** (GitHub, Stripe): the CLI uses CDP isolated-world injection which bypasses page-level Trusted Types and CSP `script-src`. Verified in `docs/spike-results.md`.
+- **Batch Chrome cost**: each URL launches a fresh headless Chrome (~1–2 s cold-start per URL). For N ≥ 50, expect multi-minute runs. Single-browser reuse is a v0.7 candidate.
 
 ## Do not
 
 - Do not bypass the CLI and invoke `puppeteer-core` directly — the CLI is the only entry that guarantees isolated-world injection + schema stamping (`__schemaVersion`).
 - Do not hand-edit the `TYPEUI_SH_MANAGED_START`&nbsp;/&nbsp;`TYPEUI_SH_MANAGED_END` block in a `SKILL.md`; downstream tooling rewrites it on regeneration.
 - Do not commit `tests/fixtures/spike-output/` or `tests/fixtures/integration-*` — they are gitignored build artifacts.
+- Do not rely on `--dump-payload` for new work — use `--format json`; the legacy flag will be removed in a future major.
 
 ## See also
 
