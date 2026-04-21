@@ -31,7 +31,7 @@ import { generateSkillMarkdown } from "../lib/generate-skill-md.mjs";
 import { generateCssVars } from "../lib/generate-css-vars.mjs";
 import { writeWithSchema, SCHEMA_VERSION } from "../lib/schema.mjs";
 import { patchContentScript, normalizeTimestamps } from "../lib/cdp-inject.mjs";
-import { parseUrlListFile, slugifyUrl, isSingleFileOutputPath } from "../lib/batch.mjs";
+import { parseUrlListFile, slugifyUrl, truncateSlug, dedupeSlug, isSingleFileOutputPath } from "../lib/batch.mjs";
 import { parseWaitMs, resolveSelectorTimeout } from "../lib/wait-opts.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -308,6 +308,7 @@ async function mainBatch() {
   const total = urls.length;
   const results = [];
   const failures = [];
+  const usedSlugs = new Set();
 
   const dir = values.output && values.output !== "-" ? values.output : null;
   if (dir) ensureDir(dir);
@@ -320,8 +321,8 @@ async function mainBatch() {
       const { payload, diagnostics, content } = await processUrl(target);
       const ext = EXT_BY_FORMAT[values.format];
       if (dir) {
-        const name = slugifyUrl(target) + ext;
-        const outPath = join(dir, name);
+        const slug = dedupeSlug(truncateSlug(slugifyUrl(target)), usedSlugs);
+        const outPath = join(dir, slug + ext);
         writeFileSync(outPath, content);
         process.stderr.write(`[${i + 1}/${total}] done in ${Date.now() - t0}ms → ${outPath}\n`);
       } else {

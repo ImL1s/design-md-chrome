@@ -214,7 +214,7 @@ import {
 // ============================================================================
 // US-001 Batch helpers (lib/batch.mjs)
 // ============================================================================
-import { parseUrlListFile, slugifyUrl, isSingleFileOutputPath } from "../lib/batch.mjs";
+import { parseUrlListFile, slugifyUrl, truncateSlug, dedupeSlug, isSingleFileOutputPath } from "../lib/batch.mjs";
 import { writeFileSync as _writeFileSync, mkdtempSync as _mkdtempSync, rmSync as _rmSync } from "node:fs";
 import { tmpdir as _tmpdir } from "node:os";
 import { join as _join } from "node:path";
@@ -271,10 +271,42 @@ import { join as _join } from "node:path";
 {
   assert.ok(isSingleFileOutputPath("out.md"), "out.md is single-file");
   assert.ok(isSingleFileOutputPath("path/to/out.json"), "out.json is single-file");
+  assert.ok(isSingleFileOutputPath("tokens.css"), ".css is single-file (US-002)");
+  assert.ok(isSingleFileOutputPath("OUT.CSS"), ".css case-insensitive");
   assert.ok(isSingleFileOutputPath("OUT.MD"), "case-insensitive");
   assert.ok(!isSingleFileOutputPath("outdir"), "no ext → not single-file");
   assert.ok(!isSingleFileOutputPath("some.dir/name"), "dot in dir name ok");
   assert.ok(!isSingleFileOutputPath("out.txt"), ".txt is not single-file");
+}
+
+// truncateSlug: length cap via hash suffix
+{
+  // Short slug passes through unchanged
+  assert.equal(truncateSlug("example.com-foo"), "example.com-foo", "short slug unchanged");
+  // Long slug truncated and deterministic
+  const long = "a".repeat(300);
+  const truncated = truncateSlug(long);
+  assert.ok(truncated.length <= 200, `truncated length ${truncated.length} <= 200`);
+  assert.match(truncated, /-[0-9a-f]{8}$/, "truncated ends with -<8 hex>");
+  assert.equal(truncateSlug(long), truncated, "same input → same output (deterministic)");
+  // Different long slugs → different hashes → different truncated output
+  const other = "b".repeat(300);
+  assert.notEqual(truncateSlug(long), truncateSlug(other), "hash differs for different inputs");
+  // Custom maxLen honored
+  assert.ok(truncateSlug("x".repeat(100), 50).length <= 50, "custom maxLen honored");
+}
+
+// dedupeSlug: appends -2/-3/... on collision, mutates usedSet
+{
+  const used = new Set();
+  assert.equal(dedupeSlug("a", used), "a", "first use returns as-is");
+  assert.equal(dedupeSlug("a", used), "a-2", "second use appends -2");
+  assert.equal(dedupeSlug("a", used), "a-3", "third use appends -3");
+  assert.equal(dedupeSlug("b", used), "b", "different slug returns as-is");
+  assert.ok(used.has("a") && used.has("a-2") && used.has("a-3") && used.has("b"), "usedSet tracks all");
+  // Pre-populated set skips occupied suffixes
+  const used2 = new Set(["x", "x-2", "x-3"]);
+  assert.equal(dedupeSlug("x", used2), "x-4", "skips occupied suffixes");
 }
 
 // ============================================================================

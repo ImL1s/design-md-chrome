@@ -121,11 +121,16 @@ try {
     assert.match(r.stderr, /--input/, "stderr mentions --input");
   }
 
-  // 9. Batch rejects --output with .md extension (must be a directory)
+  // 9. Batch rejects --output with .md/.css extension (must be a directory)
   {
     const r = run(["extract", URL_A, URL_B, "-o", DESIGN_MD_OUT]);
     assert.equal(r.status, 2, `batch + .md output exit 2, got ${r.status}`);
     assert.match(r.stderr, /directory/i, "stderr says --output must be directory");
+
+    // US-002 follow-up: .css is now also single-file (review fix)
+    const rCss = run(["extract", URL_A, URL_B, "--format", "css-vars", "-o", "out.css"]);
+    assert.equal(rCss.status, 2, `batch + .css output exit 2, got ${rCss.status}`);
+    assert.match(rCss.stderr, /directory/i, "stderr says --output must be directory (css)");
   }
 
   // 10. Batch positional (2 URLs) → stdout with `---` separator, 2 DESIGN.md heads
