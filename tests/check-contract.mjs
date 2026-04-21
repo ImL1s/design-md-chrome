@@ -189,9 +189,35 @@ function stripEnvelope(payload) {
   return payload;
 }
 
+// Machine-specific fixture paths leak into `source.url` and
+// `siteSignals.pathname` because the CLI records whatever URL Chrome actually
+// loaded. The baseline committed by one developer will embed their local
+// checkout path; CI and other developers' checkouts live elsewhere. Collapse
+// both sides to a sentinel so the comparator stays portable.
+function normalizeFixturePaths(obj) {
+  if (Array.isArray(obj)) return obj.map(normalizeFixturePaths);
+  if (obj && typeof obj === "object") {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if ((k === "url" || k === "pathname") && typeof v === "string") {
+        const m = v.match(/^(file:\/\/)(.*\/)?([^/]+)$/);
+        if (m) { out[k] = `${m[1]}/__FIXTURE__/${m[3]}`; continue; }
+        if (v.startsWith("/") && /\.html?$/i.test(v)) {
+          const base = v.split("/").pop();
+          out[k] = `/__FIXTURE__/${base}`;
+          continue;
+        }
+      }
+      out[k] = normalizeFixturePaths(v);
+    }
+    return out;
+  }
+  return obj;
+}
+
 export function checkContract(baseline, target) {
-  const cleanBaseline = stripEnvelope(baseline);
-  const cleanTarget = stripEnvelope(target);
+  const cleanBaseline = normalizeFixturePaths(stripEnvelope(baseline));
+  const cleanTarget = normalizeFixturePaths(stripEnvelope(target));
   const errors = [];
   compareNode(cleanBaseline, cleanTarget, "", errors);
   const hb = computeContentHashes(cleanBaseline);
